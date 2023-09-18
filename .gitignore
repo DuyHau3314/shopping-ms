@@ -1,3 +1,6 @@
 /customer/node_modules
 /products/node_modules
 /shopping/node_modules
+/products/.env
+/shopping/.env
+/customer/.env
