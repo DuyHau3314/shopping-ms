@@ -1,0 +1,64 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Deploy on QA
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy_on_qa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+
+      - name: Create Products Env File
+        working-directory: ./products
+        run: |
+          touch .env
+          echo "" >> .env
+          echo APP_SECRET=jg_youtube_tutorial >> .env
+          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_products >> .env
+          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo PORT=8002 >> .env
+          cat .env
+
+      - name: Create Customer Env File
+        working-directory: ./customer
+        run: |
+          touch .env
+          echo "" >> .env
+          echo APP_SECRET=jg_youtube_tutorial >> .env
+          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_customer >> .env
+          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo PORT=8001 >> .env
+          cat .env
+
+      - name: Create Shopping Env File
+        working-directory: ./shopping
+        run: |
+          touch .env
+          echo "" >> .env
+          echo APP_SECRET=jg_youtube_tutorial >> .env
+          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_shopping >> .env
+          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo PORT=8003 >> .env
+          cat .env
+
+      - name: Generate deployment package
+        run: |
+          zip -r deploy.zip . -x '*.git'
+
+      # - name: Deploy on Elastic beanstalk QA Env
+      #   uses: einaregilsson/beanstalk-deploy@v20
+      #   with:
+      #     aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+      #     aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      #     application_name: "shopping-ms-aws"
+      #     environment_name: "Shopping-ms-aws-env-1"
+      #     version_label: "ver-${{github.sha}}"
+      #     region: ap-southeast-1
