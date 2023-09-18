@@ -51,7 +51,7 @@ module.exports.FormateData = (data) => {
   }
 };
 
-/* Message Broker */
+/* Message Broker *///
 
 // create a channel
 module.exports.CreateChannel = async () => {
