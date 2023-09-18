@@ -53,12 +53,12 @@ jobs:
         run: |
           zip -r deploy.zip . -x '*.git'
 
-      # - name: Deploy on Elastic beanstalk QA Env
-      #   uses: einaregilsson/beanstalk-deploy@v20
-      #   with:
-      #     aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
-      #     aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-      #     application_name: "shopping-ms-aws"
-      #     environment_name: "Shopping-ms-aws-env-1"
-      #     version_label: "ver-${{github.sha}}"
-      #     region: ap-southeast-1
+      - name: Deploy on Elastic beanstalk QA Env
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          application_name: "shopping-ms-aws"
+          environment_name: "Shopping-ms-aws-env-1"
+          version_label: "ver-${{github.sha}}"
+          region: ap-southeast-1
