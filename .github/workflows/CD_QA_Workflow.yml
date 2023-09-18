@@ -20,7 +20,6 @@ jobs:
         working-directory: ./products
         run: |
           touch .env
-          echo "" >> .env
           echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
           echo MONGODB_URI=${{ secrets.QA_PRODUCTS_DB_URL }} >> .env
           echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
@@ -31,7 +30,6 @@ jobs:
         working-directory: ./customer
         run: |
           touch .env
-          echo "" >> .env
           echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
           echo MONGODB_URI=${{ secrets.QA_CUSTOMER_DB_URL }} >> .env
           echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
@@ -42,7 +40,6 @@ jobs:
         working-directory: ./shopping
         run: |
           touch .env
-          echo "" >> .env
           echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
           echo MONGODB_URI=${{ secrets.QA_SHOPPING_DB_URL }} >> .env
           echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
