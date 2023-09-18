@@ -62,3 +62,4 @@ jobs:
           environment_name: "Shopping-ms-aws-env-1"
           version_label: "ver-${{github.sha}}"
           region: ap-southeast-1
+          deployment_package: deploy.zip
