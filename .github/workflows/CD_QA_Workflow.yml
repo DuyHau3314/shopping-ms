@@ -21,9 +21,9 @@ jobs:
         run: |
           touch .env
           echo "" >> .env
-          echo APP_SECRET=jg_youtube_tutorial >> .env
-          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_products >> .env
-          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
+          echo MONGODB_URI=${{ secrets.QA_PRODUCTS_DB_URL }} >> .env
+          echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
           echo PORT=8002 >> .env
           cat .env
 
@@ -32,9 +32,9 @@ jobs:
         run: |
           touch .env
           echo "" >> .env
-          echo APP_SECRET=jg_youtube_tutorial >> .env
-          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_customer >> .env
-          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
+          echo MONGODB_URI=${{ secrets.QA_CUSTOMER_DB_URL }} >> .env
+          echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
           echo PORT=8001 >> .env
           cat .env
 
@@ -43,9 +43,9 @@ jobs:
         run: |
           touch .env
           echo "" >> .env
-          echo APP_SECRET=jg_youtube_tutorial >> .env
-          echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_shopping >> .env
-          echo MESSAGE_BROKER_URL=amqps://xvwwfjho:9PtmNfLzh1KpLCLxn7giejfs5kHQlTYh@octopus.rmq3.cloudamqp.com/xvwwfjho >> .env
+          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
+          echo MONGODB_URI=${{ secrets.QA_SHOPPING_DB_URL }} >> .env
+          echo MESSAGE_BROKER_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
           echo PORT=8003 >> .env
           cat .env
 
