@@ -1,25 +1,26 @@
-const { ProductRepository } = require("../database");
-const { FormateData } = require("../utils");
+const { ProductRepository } = require('../database');
+const { FormateData } = require('../utils');
 const { APIError } = require('../utils/app-errors');
 
 // All Business logic will be here
 class ProductService {
-
-    constructor(){
+    constructor() {
         this.repository = new ProductRepository();
     }
 
-    async CreateProduct(productInputs){
-        try{
-            const productResult = await this.repository.CreateProduct(productInputs)
+    async CreateProduct(productInputs) {
+        try {
+            const productResult = await this.repository.CreateProduct(
+                productInputs
+            );
             return FormateData(productResult);
-        }catch(err){
-            throw new APIError('Data Not found')
+        } catch (err) {
+            throw new APIError('Data Not found');
         }
     }
 
-    async GetProducts(){
-        try{
+    async GetProducts() {
+        try {
             const products = await this.repository.Products();
 
             let categories = {};
@@ -30,66 +31,76 @@ class ProductService {
 
             return FormateData({
                 products,
-                categories:  Object.keys(categories) ,
-            })
-
-        }catch(err){
-            throw new APIError('Data Not found')
+                categories: Object.keys(categories),
+            });
+        } catch (err) {
+            throw new APIError('Data Not found');
         }
     }
 
-
-    async GetProductDescription(productId){
+    async GetProductDescription(productId) {
         try {
             const product = await this.repository.FindById(productId);
-            return FormateData(product)
+            return FormateData(product);
         } catch (err) {
-            throw new APIError('Data Not found')
+            throw new APIError('Data Not found');
         }
     }
 
-    async GetProductsByCategory(category){
+    async GetProductsByCategory(category) {
         try {
             const products = await this.repository.FindByCategory(category);
-            return FormateData(products)
-        } catch (err) {
-            throw new APIError('Data Not found')
-        }
-
-    }
-
-    async GetSelectedProducts(selectedIds){
-        try {
-            const products = await this.repository.FindSelectedProducts(selectedIds);
             return FormateData(products);
         } catch (err) {
-            throw new APIError('Data Not found')
+            throw new APIError('Data Not found');
         }
     }
 
-    async GetProductById(productId){
+    async GetSelectedProducts(selectedIds) {
+        try {
+            const products = await this.repository.FindSelectedProducts(
+                selectedIds
+            );
+            return FormateData(products);
+        } catch (err) {
+            throw new APIError('Data Not found');
+        }
+    }
+
+    async GetProductById(productId) {
         try {
             return await this.repository.FindById(productId);
         } catch (err) {
-            throw new APIError('Data Not found')
+            throw new APIError('Data Not found');
         }
     }
 
-    async GetProductPayload(userId, {productId, qty}, event) {
+    async GetProductPayload(userId, { productId, qty }, event) {
         const product = await this.repository.FindById(productId);
 
-        if(product) {
+        if (product) {
             const payload = {
                 event: event,
-                data: {userId, product, qty}
-            }
+                data: { userId, product, qty },
+            };
             return FormateData(payload);
         }
 
-        return FormateData({error: 'No product available'})
+        return FormateData({ error: 'No product available' });
     }
 
+    // RPC response
+    async serveRPCRequest(payload) {
+        const { type, data } = payload;
+        switch (type) {
+            case 'VIEW_PRODUCT':
+                return await this.repository.FindById(data);
+            case 'VIEW_PRODUCTS':
+                return await this.repository.FindSelectedProducts(data);
+            default:
+                break;
+        }
+    }
 }
-
 
 module.exports = ProductService;
