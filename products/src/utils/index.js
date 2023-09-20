@@ -52,11 +52,19 @@ module.exports.FormateData = (data) => {
 
 /* Message Broker */
 
+let amqplibConnection = null;
+
+const getChannel = async () => {
+  if (amqplibConnection === null) {
+    amqplibConnection = await amqplib.connect(MESSAGE_BROKER_URL);
+  }
+  return await amqplibConnection.createChannel();
+};
+
 // create a channel
 module.exports.CreateChannel = async () => {
   try {
-    const connection = await amqplib.connect(MESSAGE_BROKER_URL);
-    const channel = await connection.createChannel();
+    const channel = await getChannel();
     await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
     return channel;
   } catch(err) {
@@ -74,6 +82,7 @@ module.exports.PublishMessage = async (channel, binding_key, message) => {
   }
 }
 
+
 // subscribe to a channel
 module.exports.SubscribeToChannel = async (channel, service, binding_key) => {
   try {
@@ -90,3 +99,33 @@ module.exports.SubscribeToChannel = async (channel, service, binding_key) => {
     throw err;
   }
 }
+
+module.exports.RPCObserver = async (RPC_QUEUE_NAME, service) => {
+  const channel = await getChannel();
+  await channel.assertQueue(RPC_QUEUE_NAME, {
+    durable: false,
+  });
+  channel.prefetch(1);
+  channel.consume(
+    RPC_QUEUE_NAME,
+    async (msg) => {
+      if (msg.content) {
+        // DB Operation
+        const payload = JSON.parse(msg.content.toString());
+        const response = await service.serveRPCRequest(payload); // call fake DB operation
+
+        channel.sendToQueue(
+          msg.properties.replyTo,
+          Buffer.from(JSON.stringify(response)),
+          {
+            correlationId: msg.properties.correlationId,
+          }
+        );
+        channel.ack(msg);
+      }
+    },
+    {
+      noAck: false,
+    }
+  );
+};

@@ -1,10 +1,12 @@
 const CustomerService = require("../services/customer-service");
-const { SubscribeToChannel } = require("../utils");
+const { SubscribeToChannel, PublishMessage } = require("../utils");
 const UserAuth = require("./middlewares/auth");
 
 module.exports = (app, channel) => {
   const service = new CustomerService();
-  SubscribeToChannel(channel, service);
+
+  // To listen
+  // SubscribeToChannel(channel, service);
 
   app.post("/signup", async (req, res, next) => {
     try {
@@ -57,11 +59,12 @@ module.exports = (app, channel) => {
     }
   });
 
-  app.get("/shoping-details", UserAuth, async (req, res, next) => {
+  app.delete("/profile", UserAuth, async (req, res, next) => {
     try {
       const { _id } = req.user;
-      const { data } = await service.GetShopingDetails(_id);
+      const { data, payload } = await service.DeleteProfile(_id);
 
+      PublishMessage(channel, 'SHOPPING_SERVICE', JSON.stringify(payload))
       return res.json(data);
     } catch (err) {
       next(err);

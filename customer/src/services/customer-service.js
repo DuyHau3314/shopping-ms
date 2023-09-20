@@ -85,21 +85,6 @@ class CustomerService {
         }
     }
 
-    async GetShopingDetails(id){
-
-        try {
-            const existingCustomer = await this.repository.FindCustomerById({id});
-
-            if(existingCustomer){
-               return FormateData(existingCustomer);
-            }
-            return FormateData({ msg: 'Error'});
-
-        } catch (err) {
-            throw new APIError('Data Not found', err)
-        }
-    }
-
     async GetWishList(customerId){
 
         try {
@@ -110,65 +95,23 @@ class CustomerService {
         }
     }
 
-    async AddToWishlist(customerId, product){
-        try {
-            const wishlistResult = await this.repository.AddWishlistItem(customerId, product);
-           return FormateData(wishlistResult);
+    async DeleteProfile(userId) {
 
-        } catch (err) {
-            throw new APIError('Data Not found', err)
-        }
-    }
+            try {
+                const existingCustomer = await this.repository.DeleteCustomerById(userId);
+                const payload = {
+                    event: "DELETE_PROFILE",
+                    data: { userId }
+                }
 
-    async ManageCart(customerId, product, qty, isRemove){
-        try {
-            const cartResult = await this.repository.AddCartItem(customerId, product, qty, isRemove);
-            return FormateData(cartResult);
-        } catch (err) {
-            throw new APIError('Data Not found', err)
-        }
-    }
+                return {
+                    data: existingCustomer,
+                    payload
+                }
 
-    async ManageOrder(customerId, order){
-        try {
-            if(order) {
-                const orderResult = await this.repository.AddOrderToProfile(customerId, order);
-                return FormateData(orderResult);
+            } catch (err) {
+                throw new APIError('Data Not found', err)
             }
-            return FormateData({});
-        } catch (err) {
-            throw new APIError('Data Not found', err)
-        }
-    }
-
-    async SubscribeEvents(payload){
-
-        payload = JSON.parse(payload);
-
-        const { event, data } =  payload;
-
-        const { userId, product, order, qty } = data;
-
-        switch(event){
-            case 'ADD_TO_WISHLIST':
-            case 'REMOVE_FROM_WISHLIST':
-                this.AddToWishlist(userId,product)
-                break;
-            case 'ADD_TO_CART':
-                this.ManageCart(userId,product, qty, false);
-                break;
-            case 'REMOVE_FROM_CART':
-                this.ManageCart(userId,product,qty, true);
-                break;
-            case 'CREATE_ORDER':
-                this.ManageOrder(userId,order);
-                break;
-            case 'TEST':
-                console.log('============  Working Shopping Service received Event: ', payload.event, ' ============');
-            default:
-                break;
-        }
-
     }
 
 }

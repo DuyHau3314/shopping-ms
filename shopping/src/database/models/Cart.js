@@ -11,12 +11,9 @@ const CartSchema = new Schema({
 			product: {
 				_id: { type: String, required: true },
 				name: { type: String },
-				desc: { type: String },
-				banner: { type: String },
+				img: { type: String },
 				price: { type: Number },
-				type: { type: String },
 				unit: { type: Number },
-				suplier: { type: String },
 			},
 			unit: { type: Number, require: true}
 		}
